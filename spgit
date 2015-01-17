@@ -25,6 +25,6 @@ u && /string/{
   u=0;next
 }
 END{
-  printf("♫ %s - %s♫ %s\n", title, artist, url)
+  printf("♫ %s - %s♫ \n%s\n", title, artist, url)
 }' -`
 git commit -m "$temp"
