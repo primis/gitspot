@@ -1,0 +1,8 @@
+tell application "Spotify"
+  set t_artist to artist of current track
+  set t_name to name of current track
+  set t_url to spotify url of current track
+end tell
+set output to ("♫ " & t_name & " - " & t_artist & " ♫% " & t_url)
+do shell script "echo " & quoted form of output 
+
