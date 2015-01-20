@@ -65,15 +65,7 @@ fi # End Linux Side of script
 
 if [[ "$unamestr" == 'Darwin' ]]; then # OS X side
 # Try Spotify First
-temp=osascript -e '
-tell application "Spotify"
-  set t_artist to artist of current track
-  set t_name to name of current track
-  set t_url to spotify url of current track
-end tell
-set output to ("♫ " & t_name & " - " & t_artist & " ♫% " & t_url)
-do shell script "echo " & quoted form of output 
-'
+temp=$(osascript mac_spotify)
 if [[ "$temp" == "♫  -  ♫% " ]]; then
 	temp='No Track Playing! Commit Aborted!'
 fi
