@@ -67,7 +67,7 @@ fi
 if [[ $temp == 'No Track Playing! Commit Aborted!' ]]; then
 	$temp
 else
-	echo $temp
-	#git add -A	
-	#git commit -m "$temp"
+	echo "$temp"
+	git add -A	
+	git commit -m "$temp"
 fi

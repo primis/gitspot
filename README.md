@@ -1,7 +1,14 @@
-# gitspot
-Spotify Git Commit Messages
-
+# spgit
+Musical Git Commit Messages
+Description:
+Any dbus compliant application can provide metadata of the currently playing track.
+spgit allows you to use this metadata as your git commit messages
 Usage:
 On linux, put spgit in your path somewhere, and when you want to commit to 
-git, simply type 'spgit' at your command line. This will grab the name and 
-URI of the currently playing Spotify Song and make it the Commit Message.
+git, simply type 'spgit' at your command line. 
+You can also add an additional message to your commit with the following format:
+    spgit "message"
+This will append your message after the currently playing track.
+You can also make your message primary by adding the -m switch like so:
+    spgit -m "message"
+
