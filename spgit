@@ -59,9 +59,11 @@ if [[ $temp == 'No Track Playing' ]]; then
 fi
 
 if [[ $1 == '-m' ]]; then
-	temp="$2 $temp"
+	temp="$2 
+$temp"
 else
-	temp="$temp $1"
+	temp="$temp 
+$1"
 fi
 
 if [[ $temp == 'No Track Playing! Commit Aborted!' ]]; then
