@@ -1,30 +1,73 @@
 #!/bin/sh
-git add -A
-temp=`dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify \
-/org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get \
-string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '
-/:artist/{a=1;next}
-/:title/{t=1;next}
-/:url/{u=1;next}
-a && /string/{
-  sub(/^.*string /,"")
-  artist=$0
-  gsub("\"","",artist)
-  a=0; next
-}
-t && /string/{
-  sub(/^.*string /,"")
-  title=$0
-  gsub("\"","",title)
-  t=0;next
-}
-u && /string/{
-  sub(/^.*string /,"")
-  url=$0
-  gsub("\"","",url)
-  u=0;next
-}
-END{
-  printf("♫ %s - %s♫ \n%s\n", title, artist, url)
-}' -`
-git commit -m "$temp"
+## Array of all the dbus names of applications  ##
+destlines=`qdbus|grep Media`
+oldIFS="$IFS"
+IFS=' '
+dest=( $destlines )
+destNum=`echo $destlines | wc -l`
+IFS=$oldIFS
+
+while (( $destNum >= 0 ))
+do 
+    destNum=$(( destNum - 1 ))
+    temp=`
+    dbus-send --print-reply --session --dest=${dest[destNum]} \
+    /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get \
+    string:'org.mpris.MediaPlayer2.Player' string:'Metadata' 2>/dev/null | awk '
+    /:artist/{a=1;next}
+    /:title/{t=1;next}
+    /:url/{u=1;next}
+    a && /string/{
+    sub(/^.*string /,"")
+    artist=$0
+    gsub("\"","",artist)
+    a=0; next
+    }
+    t && /string/{
+        sub(/^.*string /,"")
+        title=$0
+        gsub("\"","",title)
+        t=0;next
+    }
+    u && /string/{
+        sub(/^.*string /,"")
+        url=$0
+        gsub("\"","",url)
+        if(match(url,"file"))
+            url=""
+        u=0;next   
+    }
+    END{
+    if(title)
+        printf("♫ %s", title)
+    if(artist)
+        printf(" - %s♫\n", artist)
+    if(!artist && title)
+        printf("♫\n")
+    if(url)
+        printf("%s\n",url)
+    if(!title)
+        printf("No Track Playing\n")
+    }' -
+    `
+    if [[ $temp != 'No Track Playing' ]]; then
+      destNum=-1
+    fi
+done
+if [[ $temp == 'No Track Playing' ]]; then
+	temp='No Track Playing!'
+fi
+
+if [[ $1 == '-m' ]]; then
+	temp="$2 $temp"
+else
+	temp="$temp $1"
+fi
+
+if [[ $temp == 'No Track Playing! Commit Aborted!' ]]; then
+	$temp
+else
+	echo $temp
+	#git add -A	
+	#git commit -m "$temp"
+fi
