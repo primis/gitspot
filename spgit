@@ -64,13 +64,28 @@ fi
 fi # End Linux Side of script
 
 if [[ "$unamestr" == 'Darwin' ]]; then # OS X side
-# Try Spotify First
-temp=$(osascript mac_spotify)
-if [[ "$temp" == "♫  -  ♫% " ]]; then
-	temp='No Track Playing! Commit Aborted!'
+ 
+destlines=`ls /usr/share/spgit/mac*`
+destNum=`echo $destlines | wc -w`
+dest=( $destlines )
+
+while (( $destNum >= 0 ))
+do
+    destNum=$(( destNum -1 ))
+    temp=$(osascript ${dest[destNum]})
+
+    if [[ "$temp" != "♫  -  ♫% " ]]; then
+        destNum=-1
+    fi
+done
+# Note, if you make a script for a music player, it has to have this as it's
+# Error format, or else bad things will happen!
+if [[ "$temp" == "♫  -  ♫% " ]]; then   
+   temp='No Track Playing! Commit Aborted!'
 fi
 temp=`echo $temp | tr '%' '\n'`
 fi # End OS X Side
+
 
 if [[ "$1" == '-m' ]]; then
 	temp="$2 
