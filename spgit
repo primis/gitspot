@@ -2,8 +2,7 @@
 ## Array of all the dbus names of applications  ##
 
 unamestr=`uname`
-if [[ "$uname" == 'Linux' ]]; then # Linux bit of the script
-
+if [[ $unamestr == "Linux" ]]; then # Linux bit of the script
 destlines=`qdbus|grep Media`
 oldIFS="$IFS"
 IFS=' '
@@ -64,7 +63,7 @@ fi
 
 fi # End Linux Side of script
 
-if [[ "$uname" == 'Darwin' ]]; then # OS X side
+if [[ "$unamestr" == 'Darwin' ]]; then # OS X side
 # Try Spotify First
 temp=osascript -e '
 tell application "Spotify"
@@ -75,13 +74,13 @@ end tell
 set output to ("♫ " & t_name & " - " & t_artist & " ♫% " & t_url)
 do shell script "echo " & quoted form of output 
 '
-if [[ $temp == "♫  -  ♫% " ]]; then
+if [[ "$temp" == "♫  -  ♫% " ]]; then
 	temp='No Track Playing! Commit Aborted!'
 fi
 temp=`echo $temp | tr '%' '\n'`
 fi # End OS X Side
 
-if [[ $1 == '-m' ]]; then
+if [[ "$1" == '-m' ]]; then
 	temp="$2 
 $temp"
 else
@@ -89,7 +88,7 @@ else
 $1"
 fi
 
-if [[ $temp == 'No Track Playing! Commit Aborted!' ]]; then
+if [[ "$temp" == 'No Track Playing! Commit Aborted!' ]]; then
 	$temp
 else
 	echo "$temp"
