@@ -1,5 +1,9 @@
 #!/bin/sh
 ## Array of all the dbus names of applications  ##
+
+unamestr=`uname`
+if [[ "$uname" == 'Linux' ]]; then # Linux bit of the script
+
 destlines=`qdbus|grep Media`
 oldIFS="$IFS"
 IFS=' '
@@ -55,8 +59,27 @@ do
     fi
 done
 if [[ $temp == 'No Track Playing' ]]; then
-	temp='No Track Playing!'
+	temp='No Track Playing! Commit Aborted!'
 fi
+
+fi # End Linux Side of script
+
+if [[ "$uname" == 'Darwin' ]]; then # OS X side
+# Try Spotify First
+temp=osascript -e '
+tell application "Spotify"
+  set t_artist to artist of current track
+  set t_name to name of current track
+  set t_url to spotify url of current track
+end tell
+set output to ("♫ " & t_name & " - " & t_artist & " ♫% " & t_url)
+do shell script "echo " & quoted form of output 
+'
+if [[ $temp == "♫  -  ♫% " ]]; then
+	temp='No Track Playing! Commit Aborted!'
+fi
+temp=`echo $temp | tr '%' '\n'`
+fi # End OS X Side
 
 if [[ $1 == '-m' ]]; then
 	temp="$2 
@@ -73,3 +96,6 @@ else
 	git add -A	
 	git commit -m "$temp"
 fi
+
+
+
